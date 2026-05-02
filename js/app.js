@@ -25,33 +25,9 @@ window.addEventListener('DOMContentLoaded', () => {
     checkSession();
   }, 2500);
 
-  initTheme();
   bindEvents();
   refreshIcons();
 });
-
-/* ── THEME ── */
-function initTheme() {
-  const saved = localStorage.getItem('theme') || 'dark';
-  document.documentElement.setAttribute('data-theme', saved);
-  updateThemeIcon(saved);
-}
-
-function bindThemeToggle() {
-  document.getElementById('theme-toggle-btn').addEventListener('click', () => {
-    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-    const newTheme = isLight ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    updateThemeIcon(newTheme);
-  });
-}
-
-function updateThemeIcon(theme) {
-  const btn = document.getElementById('theme-toggle-btn');
-  btn.innerHTML = theme === 'light' ? '<i data-lucide="moon"></i>' : '<i data-lucide="sun"></i>';
-  refreshIcons();
-}
 
 /* ── SESSION ── */
 function checkSession() {
@@ -400,16 +376,6 @@ async function loadTransactions() {
   if (txnFilter !== 'all') query = query.eq('payment_mode', txnFilter);
   const { data } = await query;
   allTxns = data || [];
-  
-  // Calculate summary
-  const totalLogs = allTxns.length;
-  const cashTotal = allTxns.filter(t=>t.payment_mode==='cash').reduce((s,t)=>s+Number(t.amount),0);
-  const upiTotal = allTxns.filter(t=>t.payment_mode==='upi').reduce((s,t)=>s+Number(t.amount),0);
-  
-  document.getElementById('txn-stat-total').textContent = totalLogs;
-  document.getElementById('txn-stat-cash').textContent = `₹${cashTotal.toFixed(0)}`;
-  document.getElementById('txn-stat-upi').textContent = `₹${upiTotal.toFixed(0)}`;
-
   renderTxns(allTxns);
 }
 
@@ -547,7 +513,6 @@ function bindLogout() {
 
 /* ── BIND ALL EVENTS ── */
 function bindEvents() {
-  bindThemeToggle();
   bindLogin();
   bindNav();
   bindSearch();

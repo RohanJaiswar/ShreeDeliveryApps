@@ -64,14 +64,11 @@
     <div class="header-left">
       <img src="icons/icon-192x192-trans.png" class="header-img" alt="Logo">
       <div>
-        <div class="header-title">Delivery Portal</div>
+        <div class="header-title">Shree Delivery</div>
         <div id="partner-name" class="header-sub">Loading...</div>
       </div>
     </div>
-    <div style="display:flex; gap: 8px;">
-      <button id="theme-toggle-btn" class="icon-btn" title="Toggle Theme"><i data-lucide="sun"></i></button>
-      <button id="logout-btn" class="icon-btn" title="Logout"><i data-lucide="log-out"></i></button>
-    </div>
+    <button id="logout-btn" class="icon-btn" title="Logout"><i data-lucide="log-out"></i></button>
   </header>
 
   <!-- Page Content -->
@@ -106,13 +103,7 @@
 
     <!-- TRANSACTIONS TAB -->
     <div id="page-transactions" class="page hidden">
-      <div class="page-title">All Transactions</div>
-
-      <div class="stats-row" style="margin-bottom: 16px;">
-        <div class="stat-card blue"><div class="stat-num" id="txn-stat-total">0</div><div class="stat-label">Total Logs</div></div>
-        <div class="stat-card green"><div class="stat-num" id="txn-stat-cash">₹0</div><div class="stat-label">Total Cash</div></div>
-        <div class="stat-card orange"><div class="stat-num" id="txn-stat-upi">₹0</div><div class="stat-label">Total UPI</div></div>
-      </div>
+      <div class="page-title">Transactions</div>
 
       <!-- Quick Action -->
       <button class="btn-primary full-width mb-12" id="new-txn-btn"><i data-lucide="plus"></i> Record New Transaction</button>
