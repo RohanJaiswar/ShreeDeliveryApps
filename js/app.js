@@ -239,8 +239,34 @@ function bindSearch() {
           document.getElementById('scan-btn').innerHTML = '<i data-lucide="qr-code"></i> Scan Invoice QR';
           refreshIcons();
           
-          document.getElementById('order-search').value = decodedText;
-          await loadOrders(decodedText.trim());
+          const scannedId = decodedText.trim();
+          document.getElementById('order-search').value = scannedId;
+          
+          // Check if scanned text is a UUID to fetch from DB
+          const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(scannedId);
+          if (isUUID) {
+             const { data: orderData } = await sb.from('orders').select('*').eq('id', scannedId).single();
+             if (orderData) {
+                if (orderData.delivery_partner_id && orderData.delivery_partner_id !== currentPartner.id) {
+                   const { data: dpData } = await sb.from('delivery_partners').select('full_name, username').eq('id', orderData.delivery_partner_id).single();
+                   const dpName = dpData ? (dpData.full_name || dpData.username) : 'another partner';
+                   showToast(`Order already assigned to ${dpName}`, 'error');
+                   document.getElementById('order-search').value = '';
+                   return;
+                } else if (!orderData.delivery_partner_id) {
+                   const { error: updateErr } = await sb.from('orders').update({
+                      delivery_partner_id: currentPartner.id
+                   }).eq('id', scannedId);
+                   if (!updateErr) showToast('Order automatically assigned to you!', 'success');
+                }
+             } else {
+                showToast('Order not found in database', 'error');
+                document.getElementById('order-search').value = '';
+                return;
+             }
+          }
+          
+          await loadOrders(scannedId);
           
           // Show the modal directly for the scanned invoice
           if (allOrders.length === 1) {
