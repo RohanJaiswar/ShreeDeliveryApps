@@ -11,6 +11,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- HTML5 QR Code Scanner -->
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -58,13 +60,14 @@
      MAIN APP
 ════════════════════════════════════════════════ -->
 <div id="app" class="hidden">
+  <div class="top-bg-green"></div>
 
   <!-- Top Header -->
   <header class="app-header">
     <div class="header-left">
       <img src="icons/icon-192x192-trans.png" class="header-img" alt="Logo">
       <div>
-        <div class="header-title">Shree Delivery</div>
+        <div class="header-title">Welcome back,</div>
         <div id="partner-name" class="header-sub">Loading...</div>
       </div>
     </div>
@@ -76,25 +79,46 @@
 
     <!-- HOME TAB -->
     <div id="page-home" class="page active">
-      <div class="page-title">Today's Deliveries</div>
+      
+      <!-- Status Card -->
+      <div class="status-card mb-16">
+         <div class="status-left">
+           <strong>Status: Online</strong>
+           <span>Open to any delivery</span>
+         </div>
+         <div class="toggle-switch active"></div>
+      </div>
 
       <!-- Stats Row -->
       <div class="stats-row" id="home-stats">
-        <div class="stat-card blue"><div class="stat-num" id="stat-total">0</div><div class="stat-label">Assigned</div></div>
-        <div class="stat-card green"><div class="stat-num" id="stat-delivered">0</div><div class="stat-label">Delivered</div></div>
-        <div class="stat-card orange"><div class="stat-num" id="stat-pending">0</div><div class="stat-label">Pending</div></div>
+        <div class="stat-card">
+          <div class="stat-num text-primary" id="stat-total">0</div>
+          <div class="stat-label">Assigned</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num text-success" id="stat-delivered">0</div>
+          <div class="stat-label">Delivered</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num text-warning" id="stat-pending">0</div>
+          <div class="stat-label">Pending</div>
+        </div>
       </div>
 
       <!-- Scan + Search -->
       <div class="scan-card" id="scan-area">
         <button class="btn-scan" id="scan-btn"><i data-lucide="qr-code"></i> Scan Invoice QR</button>
+        <div id="reader" style="width:100%; margin-top:14px; border-radius:12px; overflow:hidden;" class="hidden"></div>
         <div class="or-divider">or search manually</div>
         <div class="search-bar">
-          <input type="text" id="order-search" placeholder="Enter Order ID / Vendor name...">
+          <input type="text" id="order-search" placeholder="Enter Order ID / Vendor...">
           <button id="search-btn"><i data-lucide="search"></i></button>
         </div>
       </div>
 
+      <div class="section-header">
+        <div class="section-title">Recent Deliveries</div>
+      </div>
       <!-- Orders List -->
       <div id="orders-list" class="orders-list">
         <div class="loading-state"><div class="spinner"></div>Loading orders...</div>
@@ -103,10 +127,10 @@
 
     <!-- TRANSACTIONS TAB -->
     <div id="page-transactions" class="page hidden">
-      <div class="page-title">Transactions</div>
+      <div class="page-title">My Collections</div>
 
       <!-- Quick Action -->
-      <button class="btn-primary full-width mb-12" id="new-txn-btn"><i data-lucide="plus"></i> Record New Transaction</button>
+      <button class="btn-primary full-width mb-16" id="new-txn-btn"><i data-lucide="plus"></i> Record New Transaction</button>
 
       <!-- Filter Row -->
       <div class="filter-row">
@@ -127,15 +151,25 @@
         <div class="profile-avatar"><i data-lucide="user"></i></div>
         <div id="profile-name" class="profile-name">—</div>
         <div id="profile-phone" class="profile-phone">—</div>
-        <div id="profile-zone" class="profile-tag">—</div>
-        <div id="profile-vehicle" class="profile-tag" style="margin-top:6px">—</div>
+        <div class="profile-tags">
+          <div id="profile-zone" class="profile-tag">—</div>
+          <div id="profile-vehicle" class="profile-tag">—</div>
+        </div>
       </div>
+      
+      <div class="details-card mb-16">
+         <div class="detail-row"><span class="dl">Username</span><span class="dv" id="prof-username">—</span></div>
+         <div class="detail-row"><span class="dl">Status</span><span class="dv" id="prof-status">—</span></div>
+         <div class="detail-row"><span class="dl">Joined</span><span class="dv" id="prof-joined">—</span></div>
+         <div class="detail-row"><span class="dl">Last Updated</span><span class="dv" id="prof-updated">—</span></div>
+      </div>
+
       <div class="profile-stats">
-        <div class="pstat"><div class="pstat-num" id="p-total-txn">0</div><div class="pstat-label">Total Transactions</div></div>
-        <div class="pstat"><div class="pstat-num" id="p-total-cash">₹0</div><div class="pstat-label">Cash Collected</div></div>
-        <div class="pstat"><div class="pstat-num" id="p-total-delivered">0</div><div class="pstat-label">Delivered Today</div></div>
+        <div class="pstat"><div class="pstat-num" id="p-total-txn">0</div><div class="pstat-label">Collections</div></div>
+        <div class="pstat"><div class="pstat-num" id="p-total-cash">₹0</div><div class="pstat-label">Cash Total</div></div>
+        <div class="pstat"><div class="pstat-num" id="p-total-delivered">0</div><div class="pstat-label">Delivered</div></div>
       </div>
-      <button class="btn-danger mt-16" id="profile-logout"><i data-lucide="log-out"></i> Logout</button>
+      <button class="btn-danger mt-16" id="profile-logout"><i data-lucide="log-out"></i> Logout from App</button>
     </div>
 
   </main>
@@ -148,7 +182,7 @@
     </button>
     <button class="nav-btn" data-page="transactions">
       <span class="nav-icon"><i data-lucide="indian-rupee"></i></span>
-      <span class="nav-label">Transactions</span>
+      <span class="nav-label">Collections</span>
     </button>
     <button class="nav-btn" data-page="profile">
       <span class="nav-icon"><i data-lucide="user"></i></span>

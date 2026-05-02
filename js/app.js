@@ -47,9 +47,18 @@ function showApp() {
   document.getElementById('profile-phone').textContent = currentPartner.phone_number || '—';
   document.getElementById('profile-zone').textContent = currentPartner.assigned_zone || 'All Zones';
   document.getElementById('profile-vehicle').textContent = currentPartner.vehicle_number || '—';
+  
+  // New detail fields
+  const elUser = document.getElementById('prof-username'); if(elUser) elUser.textContent = currentPartner.username || '—';
+  const elStatus = document.getElementById('prof-status'); if(elStatus) elStatus.textContent = currentPartner.status || 'Active';
+  const elJoined = document.getElementById('prof-joined'); if(elJoined) elJoined.textContent = formatDate(currentPartner.created_at).split(',')[0];
+  const elUpdated = document.getElementById('prof-updated'); if(elUpdated) elUpdated.textContent = formatDate(currentPartner.updated_at).split(',')[0];
+
   showScreen('app');
   loadOrders();
   loadVendors();
+  loadTransactions();
+  loadProfileStats();
 }
 
 /* ── SCREENS ── */
@@ -123,10 +132,6 @@ async function loadOrders(searchTerm = '') {
     .eq('delivery_partner_id', currentPartner.id)
     .order('created_at', { ascending: false });
 
-  if (searchTerm) {
-    query = query.or(`vendor_name.ilike.%${searchTerm}%,id.ilike.%${searchTerm}%`);
-  }
-
   let { data, error } = await query;
 
   // Fallback: show all orders if none assigned yet (dev/testing)
@@ -136,6 +141,16 @@ async function loadOrders(searchTerm = '') {
       .order('created_at', { ascending: false })
       .limit(50);
     data = fb.data || [];
+  }
+
+  // Filter in memory to safely support UUIDs, vendor names, or short IDs
+  if (searchTerm) {
+    const term = searchTerm.toLowerCase();
+    data = data.filter(o => 
+      (o.id && o.id.toLowerCase().includes(term)) ||
+      (o.vendor_name && o.vendor_name.toLowerCase().includes(term)) ||
+      (o.vendors && o.vendors.store_name && o.vendors.store_name.toLowerCase().includes(term))
+    );
   }
 
   allOrders = data;
@@ -184,7 +199,8 @@ function updateStats() {
   document.getElementById('stat-pending').textContent = allOrders.filter(o => !o.delivery_status || o.delivery_status === 'pending').length;
 }
 
-/* ── SEARCH & SCAN ── */
+let html5QrCode = null;
+
 function bindSearch() {
   document.getElementById('search-btn').addEventListener('click', () => {
     loadOrders(document.getElementById('order-search').value.trim());
@@ -192,9 +208,57 @@ function bindSearch() {
   document.getElementById('order-search').addEventListener('keydown', e => {
     if (e.key === 'Enter') loadOrders(e.target.value.trim());
   });
-  document.getElementById('scan-btn').addEventListener('click', () => {
-    const ref = prompt('Enter Order ID from Invoice:');
-    if (ref) loadOrders(ref.trim());
+  document.getElementById('scan-btn').addEventListener('click', async () => {
+    if (html5QrCode) {
+      // If already scanning, stop it
+      try { await html5QrCode.stop(); } catch(e) {}
+      html5QrCode.clear();
+      document.getElementById('reader').classList.add('hidden');
+      document.getElementById('scan-btn').innerHTML = '<i data-lucide="qr-code"></i> Scan Invoice QR';
+      html5QrCode = null;
+      refreshIcons();
+      return;
+    }
+
+    // Start scanner
+    document.getElementById('reader').classList.remove('hidden');
+    document.getElementById('scan-btn').innerHTML = '<i data-lucide="x"></i> Cancel Scanning';
+    refreshIcons();
+
+    html5QrCode = new Html5Qrcode("reader");
+    try {
+      await html5QrCode.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        async (decodedText) => {
+          // On success
+          try { await html5QrCode.stop(); } catch(e) {}
+          html5QrCode.clear();
+          document.getElementById('reader').classList.add('hidden');
+          html5QrCode = null;
+          document.getElementById('scan-btn').innerHTML = '<i data-lucide="qr-code"></i> Scan Invoice QR';
+          refreshIcons();
+          
+          document.getElementById('order-search').value = decodedText;
+          await loadOrders(decodedText.trim());
+          
+          // Show the modal directly for the scanned invoice
+          if (allOrders.length === 1) {
+            openOrderModal(allOrders[0].id);
+          }
+        },
+        (error) => {
+          // Ignore background scanning errors
+        }
+      );
+    } catch (err) {
+      console.error("Camera error:", err);
+      showToast('Camera access denied or error', 'error');
+      document.getElementById('reader').classList.add('hidden');
+      document.getElementById('scan-btn').innerHTML = '<i data-lucide="qr-code"></i> Scan Invoice QR';
+      html5QrCode = null;
+      refreshIcons();
+    }
   });
 }
 
