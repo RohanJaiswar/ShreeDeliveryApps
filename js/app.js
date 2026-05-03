@@ -165,7 +165,6 @@ function renderOrders(orders) {
     refreshIcons();
     return;
   }
-  const statusColor = { pending:'#ffa940', out_for_delivery:'#6c63ff', delivered:'#00d4aa', failed:'#ff4d6d' };
   el.innerHTML = orders.map(o => {
     const ds = o.delivery_status || 'pending';
     const vendorName = o.vendor_name || o.vendors?.store_name || 'Unknown';
@@ -173,7 +172,7 @@ function renderOrders(orders) {
     const due = Number(o.vendors?.outstanding_balance || 0);
     const orderId = o.id.slice(0,8).toUpperCase();
     return `
-    <div class="order-card" onclick="openOrderModal('${o.id}')" style="border-left-color:${statusColor[ds]||'#6c63ff'}">
+    <div class="order-card" onclick="openOrderModal('${o.id}')">
       <div class="order-top">
         <div>
           <div class="order-vendor">${vendorName}</div>
