@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Shree Delivery — Partner App</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0b0d14">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- HTML5 QR Code Scanner -->
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     SPLASH SCREEN
+════════════════════════════════════════════════ -->
+<div id="splash-screen" class="splash">
+  <div class="splash-content">
+    <div class="splash-logo">
+      <div class="logo-ring"></div>
+      <img src="icons/icon-192x192-trans.png" class="logo-img" alt="Logo">
+    </div>
+    <h1 class="splash-title">Shree Delivery</h1>
+    <p class="splash-subtitle">Partner App</p>
+    <div class="splash-bar"><div class="splash-fill"></div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     LOGIN SCREEN
+════════════════════════════════════════════════ -->
+<div id="login-screen" class="hidden">
+  <div class="login-bg"></div>
+  <div class="login-card">
+    <div class="login-header">
+      <img src="icons/icon-192x192-trans.png" class="login-img" alt="Logo">
+      <h2>Shree Delivery</h2>
+      <p>Delivery Partner Login</p>
+    </div>
+    <div class="form-group">
+      <label>Phone / Username</label>
+      <input type="text" id="login-username" placeholder="Enter your username" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="login-password" placeholder="Enter password">
+    </div>
+    <div id="login-error" class="error-msg hidden"></div>
+    <button id="login-btn" class="btn-primary">Login</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     MAIN APP
+════════════════════════════════════════════════ -->
+<div id="app" class="hidden">
+  <div class="top-bg-green"></div>
+
+  <!-- Top Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <img src="icons/icon-192x192-trans.png" class="header-img" alt="Logo">
+      <div>
+        <div class="header-title">Welcome back,</div>
+        <div id="partner-name" class="header-sub">Loading...</div>
+      </div>
+    </div>
+    <button id="logout-btn" class="icon-btn" title="Logout"><i data-lucide="log-out"></i></button>
+  </header>
+
+  <!-- Page Content -->
+  <main class="app-main">
+
+    <!-- HOME TAB -->
+    <div id="page-home" class="page active">
+      
+      <!-- Status Card -->
+      <div class="status-card mb-16">
+         <div class="status-left">
+           <strong>Status: Online</strong>
+           <span>Open to any delivery</span>
+         </div>
+         <div class="toggle-switch active"></div>
+      </div>
+
+      <!-- Stats Row -->
+      <div class="stats-row" id="home-stats">
+        <div class="stat-card">
+          <div class="stat-num text-primary" id="stat-total">0</div>
+          <div class="stat-label">Assigned</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num text-success" id="stat-delivered">0</div>
+          <div class="stat-label">Delivered</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num text-warning" id="stat-pending">0</div>
+          <div class="stat-label">Pending</div>
+        </div>
+      </div>
+
+      <!-- Scan + Search -->
+      <div class="scan-card" id="scan-area">
+        <button class="btn-scan" id="scan-btn"><i data-lucide="qr-code"></i> Scan Invoice QR</button>
+        <div id="reader" style="width:100%; margin-top:14px; border-radius:12px; overflow:hidden;" class="hidden"></div>
+        <div class="or-divider">or search manually</div>
+        <div class="search-bar">
+          <input type="text" id="order-search" placeholder="Enter Order ID / Vendor...">
+          <button id="search-btn"><i data-lucide="search"></i></button>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">Recent Deliveries</div>
+      </div>
+      <!-- Orders List -->
+      <div id="orders-list" class="orders-list">
+        <div class="loading-state"><div class="spinner"></div>Loading orders...</div>
+      </div>
+    </div>
+
+    <!-- TRANSACTIONS TAB -->
+    <div id="page-transactions" class="page">
+      <div class="page-title">My Collections</div>
+
+      <!-- Quick Action -->
+      <button class="btn-primary full-width mb-16" id="new-txn-btn"><i data-lucide="plus"></i> Record New Transaction</button>
+
+      <!-- Filter Row -->
+      <div class="filter-row">
+        <button class="filter-chip active" data-filter="all">All</button>
+        <button class="filter-chip" data-filter="cash">Cash</button>
+        <button class="filter-chip" data-filter="upi">UPI</button>
+      </div>
+
+      <div id="txn-list" class="orders-list">
+        <div class="loading-state"><div class="spinner"></div>Loading transactions...</div>
+      </div>
+    </div>
+
+    <!-- PROFILE TAB -->
+    <div id="page-profile" class="page">
+      <div class="page-title">My Profile</div>
+      <div class="profile-card">
+        <div class="profile-avatar"><i data-lucide="user"></i></div>
+        <div id="profile-name" class="profile-name">—</div>
+        <div id="profile-phone" class="profile-phone">—</div>
+        <div class="profile-tags">
+          <div id="profile-zone" class="profile-tag">—</div>
+          <div id="profile-vehicle" class="profile-tag">—</div>
+        </div>
+      </div>
+      
+      <div class="details-card mb-16">
+         <div class="detail-row"><span class="dl">Username</span><span class="dv" id="prof-username">—</span></div>
+         <div class="detail-row"><span class="dl">Status</span><span class="dv" id="prof-status">—</span></div>
+         <div class="detail-row"><span class="dl">Joined</span><span class="dv" id="prof-joined">—</span></div>
+         <div class="detail-row"><span class="dl">Last Updated</span><span class="dv" id="prof-updated">—</span></div>
+      </div>
+
+      <div class="profile-stats">
+        <div class="pstat"><div class="pstat-num" id="p-total-txn">0</div><div class="pstat-label">Collections</div></div>
+        <div class="pstat"><div class="pstat-num" id="p-total-cash">₹0</div><div class="pstat-label">Cash Total</div></div>
+        <div class="pstat"><div class="pstat-num" id="p-total-delivered">0</div><div class="pstat-label">Delivered</div></div>
+      </div>
+      <button class="btn-danger mt-16" id="profile-logout"><i data-lucide="log-out"></i> Logout from App</button>
+    </div>
+
+  </main>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-page="home">
+      <span class="nav-icon"><i data-lucide="home"></i></span>
+      <span class="nav-label">Home</span>
+    </button>
+    <button class="nav-btn" data-page="transactions">
+      <span class="nav-icon"><i data-lucide="indian-rupee"></i></span>
+      <span class="nav-label">Collections</span>
+    </button>
+    <button class="nav-btn" data-page="profile">
+      <span class="nav-icon"><i data-lucide="user"></i></span>
+      <span class="nav-label">Profile</span>
+    </button>
+  </nav>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     MODALS
+════════════════════════════════════════════════ -->
+
+<!-- Order Detail Modal -->
+<div id="order-modal" class="modal-overlay hidden">
+  <div class="modal-sheet">
+    <div class="modal-drag"></div>
+    <div class="modal-header">
+      <h3 id="modal-order-title">Order Details</h3>
+      <button class="modal-close" id="close-order-modal"><i data-lucide="x"></i></button>
+    </div>
+    <div id="modal-order-body"></div>
+    <div class="modal-actions">
+      <button class="btn-success" id="mark-delivered-btn"><i data-lucide="check-circle"></i> Mark as Delivered</button>
+      <button class="btn-primary" id="collect-payment-btn"><i data-lucide="indian-rupee"></i> Collect Payment</button>
+    </div>
+  </div>
+</div>
+
+<!-- Payment Modal -->
+<div id="payment-modal" class="modal-overlay hidden">
+  <div class="modal-sheet">
+    <div class="modal-drag"></div>
+    <div class="modal-header">
+      <h3>Collect Payment</h3>
+      <button class="modal-close" id="close-payment-modal"><i data-lucide="x"></i></button>
+    </div>
+    <div class="payment-body">
+      <div class="vendor-due-banner" id="vendor-due-banner"></div>
+      <div class="pay-mode-row">
+        <button class="pay-mode-btn active" data-mode="cash" id="mode-cash"><i data-lucide="banknote"></i> Cash</button>
+        <button class="pay-mode-btn" data-mode="upi" id="mode-upi"><i data-lucide="smartphone"></i> UPI</button>
+      </div>
+      <!-- Cash form -->
+      <div id="cash-form">
+        <div class="form-group">
+          <label>Amount Received (₹)</label>
+          <input type="number" id="cash-amount" placeholder="Enter amount" min="0">
+        </div>
+        <div class="form-group">
+          <label>Notes (optional)</label>
+          <input type="text" id="cash-notes" placeholder="e.g. Partial payment">
+        </div>
+        <button class="btn-success full-width" id="confirm-cash-btn"><i data-lucide="check-circle"></i> Confirm Cash Payment</button>
+      </div>
+      <!-- UPI QR form -->
+      <div id="upi-form" class="hidden">
+        <div class="form-group">
+          <label>Amount (₹)</label>
+          <input type="number" id="upi-amount" placeholder="Enter amount" min="0">
+        </div>
+        <div id="qr-container" class="qr-container hidden">
+          <img id="qr-image" src="" alt="UPI QR Code">
+          <p class="qr-note">Show this QR to the vendor for payment</p>
+        </div>
+        <button class="btn-primary full-width mb-8" id="generate-qr-btn">Generate QR Code</button>
+        <div class="form-group">
+          <label>UPI Transaction Reference</label>
+          <input type="text" id="upi-ref" placeholder="Enter UTR / Ref number after payment">
+        </div>
+        <button class="btn-success full-width" id="confirm-upi-btn"><i data-lucide="check-circle"></i> Confirm UPI Payment</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- New Transaction Modal (for due settlements) -->
+<div id="newtxn-modal" class="modal-overlay hidden">
+  <div class="modal-sheet">
+    <div class="modal-drag"></div>
+    <div class="modal-header">
+      <h3>Record Transaction</h3>
+      <button class="modal-close" id="close-newtxn-modal"><i data-lucide="x"></i></button>
+    </div>
+    <div class="payment-body">
+      <div class="form-group">
+        <label>Select Vendor</label>
+        <select id="txn-vendor-select"><option value="">-- Select Vendor --</option></select>
+      </div>
+      <div id="selected-vendor-due" class="vendor-due-banner hidden"></div>
+      <div class="form-group">
+        <label>Amount (₹)</label>
+        <input type="number" id="txn-amount" placeholder="Enter amount" min="0">
+      </div>
+      <div class="pay-mode-row">
+        <button class="pay-mode-btn active" data-mode="cash" id="newtxn-mode-cash"><i data-lucide="banknote"></i> Cash</button>
+        <button class="pay-mode-btn" data-mode="upi" id="newtxn-mode-upi"><i data-lucide="smartphone"></i> UPI</button>
+      </div>
+      <div class="form-group" id="newtxn-upi-ref-group" style="display:none">
+        <label>UPI Reference</label>
+        <input type="text" id="newtxn-upi-ref" placeholder="UTR / Ref number">
+      </div>
+      <div class="form-group">
+        <label>Type</label>
+        <select id="txn-type-select">
+          <option value="payment_received">Payment Received</option>
+          <option value="due_settlement">Due Settlement</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Notes</label>
+        <input type="text" id="txn-notes" placeholder="Optional notes">
+      </div>
+      <button class="btn-success full-width" id="save-txn-btn"><i data-lucide="save"></i> Save Transaction</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast hidden"></div>
+
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- QR Code lib -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
