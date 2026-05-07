@@ -41,6 +41,28 @@ html, body {
 }
 .hidden { display: none !important; }
 
+/* ─── LIGHT THEME ────────────────────────────────────── */
+[data-theme="light"] {
+  --bg: #f8fafc;
+  --bg2: #ffffff;
+  --bg3: #f1f5f9;
+  --card: rgba(255, 255, 255, 0.85);
+  --card-hover: rgba(255, 255, 255, 1);
+  --text: #0f172a;
+  --text2: #64748b;
+  --border: rgba(0, 0, 0, 0.1);
+  --border-light: rgba(0, 0, 0, 0.15);
+  --primary-glow: rgba(16, 185, 129, 0.15);
+}
+[data-theme="light"] .splash { background: linear-gradient(135deg, #f8fafc, #e2e8f0); }
+[data-theme="light"] .splash-title { background: linear-gradient(to right, #059669, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+[data-theme="light"] .bottom-nav { background: rgba(255, 255, 255, 0.9); box-shadow: 0 -8px 32px rgba(0,0,0,0.05); }
+[data-theme="light"] .form-group input, [data-theme="light"] .form-group select { background: rgba(0, 0, 0, 0.03); }
+[data-theme="light"] .form-group input:focus, [data-theme="light"] .form-group select:focus { background: #fff; }
+[data-theme="light"] .items-box { background: rgba(0, 0, 0, 0.03); }
+[data-theme="light"] .pay-mode-btn { background: rgba(0, 0, 0, 0.03); }
+[data-theme="light"] .login-bg { background-image: radial-gradient(circle at 50% 0%, rgba(16,185,129,0.15), transparent 50%); }
+
 /* ─── LUCIDE ICONS ───────────────────────────────────── */
 i[data-lucide] { vertical-align: middle; stroke-width: 2.5; display: inline-block; transition: all 0.3s ease; }
 

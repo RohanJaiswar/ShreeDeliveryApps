@@ -37,6 +37,7 @@
 ════════════════════════════════════════════════ -->
 <div id="login-screen" class="hidden">
   <div class="login-bg"></div>
+  <button id="login-theme-toggle" class="icon-btn" style="position: absolute; top: 24px; right: 24px; z-index: 10;" title="Toggle Theme"><i data-lucide="sun"></i></button>
   <div class="login-card">
     <div class="login-header">
       <img src="icons/icon-192x192-trans.png" class="login-img" alt="Logo">
@@ -71,7 +72,10 @@
         <div id="partner-name" class="header-sub">Loading...</div>
       </div>
     </div>
-    <button id="logout-btn" class="icon-btn" title="Logout"><i data-lucide="log-out"></i></button>
+    <div style="display: flex; gap: 8px;">
+      <button id="theme-toggle-btn" class="icon-btn" title="Toggle Theme"><i data-lucide="sun"></i></button>
+      <button id="logout-btn" class="icon-btn" title="Logout"><i data-lucide="log-out"></i></button>
+    </div>
   </header>
 
   <!-- Page Content -->

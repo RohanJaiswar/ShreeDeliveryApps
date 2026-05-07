@@ -610,6 +610,33 @@ function bindEvents() {
   bindNewTxnModal();
   bindFilterChips();
   bindLogout();
+  bindThemeToggle();
+}
+
+/* ── THEME TOGGLE ── */
+function bindThemeToggle() {
+  const btn = document.getElementById('theme-toggle-btn');
+  if (!btn) return;
+  const currentTheme = localStorage.getItem('app-theme') || 'dark';
+  document.body.setAttribute('data-theme', currentTheme);
+  updateThemeIcon(currentTheme);
+
+  btn.addEventListener('click', () => {
+    const theme = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.body.setAttribute('data-theme', theme);
+    localStorage.setItem('app-theme', theme);
+    updateThemeIcon(theme);
+    refreshIcons();
+  });
+}
+
+function updateThemeIcon(theme) {
+  const btn = document.getElementById('theme-toggle-btn');
+  if (theme === 'light') {
+    btn.innerHTML = '<i data-lucide="moon"></i>';
+  } else {
+    btn.innerHTML = '<i data-lucide="sun"></i>';
+  }
 }
 
 /* ── HELPERS ── */

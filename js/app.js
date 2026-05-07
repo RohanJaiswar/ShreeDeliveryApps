@@ -610,6 +610,36 @@ function bindEvents() {
   bindNewTxnModal();
   bindFilterChips();
   bindLogout();
+  bindThemeToggle();
+}
+
+/* ── THEME TOGGLE ── */
+function bindThemeToggle() {
+  const btn1 = document.getElementById('theme-toggle-btn');
+  const btn2 = document.getElementById('login-theme-toggle');
+  
+  const currentTheme = localStorage.getItem('app-theme') || 'dark';
+  document.body.setAttribute('data-theme', currentTheme);
+  updateThemeIcon(currentTheme);
+
+  const toggle = () => {
+    const theme = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.body.setAttribute('data-theme', theme);
+    localStorage.setItem('app-theme', theme);
+    updateThemeIcon(theme);
+    refreshIcons();
+  };
+
+  if(btn1) btn1.addEventListener('click', toggle);
+  if(btn2) btn2.addEventListener('click', toggle);
+}
+
+function updateThemeIcon(theme) {
+  const btn1 = document.getElementById('theme-toggle-btn');
+  const btn2 = document.getElementById('login-theme-toggle');
+  const icon = theme === 'light' ? '<i data-lucide="moon"></i>' : '<i data-lucide="sun"></i>';
+  if(btn1) btn1.innerHTML = icon;
+  if(btn2) btn2.innerHTML = icon;
 }
 
 /* ── HELPERS ── */
